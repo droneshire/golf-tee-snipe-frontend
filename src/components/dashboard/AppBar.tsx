@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { GolfCourse } from "@mui/icons-material";
 
 interface StyledAppBarProps extends MuiAppBarProps {
   drawerWidth: number;
@@ -83,8 +84,7 @@ const AppBar: FC<AppBarProps> = ({
         >
           <MenuIcon />
         </IconButton>
-        {/* <CurrencyExchangeIcon  sx={{ marginRight: "12px" }}/> */}
-        <Avatar src="/logo.png" sx={{ marginRight: "12px" }} variant="square" />
+        <GolfCourse />
         <Typography
           component="h1"
           variant="h6"
@@ -92,7 +92,7 @@ const AppBar: FC<AppBarProps> = ({
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          TODO: REPLACE ME
+          Golf Tee Time Sniper
         </Typography>
         <IconButton onClick={toggleUserMenu}>
           <Avatar alt="User Account" src={user.photoURL || ""}>

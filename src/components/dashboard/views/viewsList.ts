@@ -4,7 +4,6 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { SvgIconComponent } from "@mui/icons-material";
 
-import AdminView from "./AdminView";
 import PreferencesView from "./PreferencesView";
 import { User } from "firebase/auth";
 import { ADMIN_USERS } from "utils/constants";
@@ -24,13 +23,6 @@ const viewsList: DashbardViewSpec[] = [
     icon: SettingsIcon,
     component: PreferencesView,
     adminOnly: false,
-  },
-  {
-    key: "admin",
-    label: "Admin",
-    icon: AdminPanelSettingsIcon,
-    component: AdminView,
-    adminOnly: true,
   },
 ];
 

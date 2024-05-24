@@ -8,11 +8,5 @@ service cloud.firestore {
       allow read, update: if request.auth.token.email == email;
       allow create, read, update, delete: if isAdmin(request);
     }
-    match /admin/{status} {
-      function isAdmin(request) {
-        return request.auth.token.email == "ryeager12@gmail.com";
-      }
-      allow read, update: if isAdmin(request);
-    }
   }
 }
