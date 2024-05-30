@@ -11,12 +11,14 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Menu,
   MenuItem,
   Snackbar,
   TextField,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useEffect } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
@@ -62,7 +64,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
 
   const [snackError, setSnackError] = React.useState<string | null>(null);
   const clearSnackError = () => setSnackError(null);
+  const [desiredTimeError, setDesiredTimeError] = React.useState(false);
 
+  const [showPassword, setShowPassword] = React.useState(false);
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const {
     runAction: doCreateAccount,
@@ -70,6 +74,23 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     error,
     clearError,
   } = useAsyncAction(props.createAccount);
+
+  const validateDesiredTime = () => {
+    console.log(
+      desiredTime,
+      earliestTime,
+      latestTime,
+      desiredTime < earliestTime,
+      desiredTime > latestTime
+    );
+    if (desiredTime < earliestTime || desiredTime > latestTime) {
+      setDesiredTimeError(true);
+      setSnackError("Desired time must be between earliest and latest time");
+    } else {
+      setDesiredTimeError(false);
+      setSnackError(null);
+    }
+  };
 
   const clearAllErrors = () => {
     clearSnackError();
@@ -132,7 +153,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   useEffect(() => {
     if (props.inputAccount) {
       setEmail(props.inputAccount.email || "");
-      setPassword("");
+      setPassword(props.inputAccount.password || "");
       setNumPlayers(Number(props.inputAccount.numPlayers) || 4);
       setTimeOfDay(props.inputAccount.timeOfDay || Times.ALL);
       setNumHoles(props.inputAccount.numHoles || 18);
@@ -178,7 +199,6 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         desiredTime < earliestTime ||
         desiredTime > latestTime ||
         earliestTime > latestTime ||
-        targetDays.length === 0 ||
         (numHoles !== 9 && numHoles !== 18) ||
         numPlayers < 1 ||
         numPlayers > 4
@@ -244,6 +264,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         <DialogTitle>
           {props.inputAccount?.email ? "Edit" : "Add"} Account
         </DialogTitle>
+        <DialogContentText>
+          Please fill out the info for the new account.
+        </DialogContentText>
         <DialogContent>
           <Grid container spacing={2}>
             {/* Text fields stacked vertically */}
@@ -264,10 +287,19 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
+                  InputProps={{
+                    type: showPassword ? "text" : "password",
+                  }}
                   fullWidth
                   required
                   sx={{ mb: 2 }}
                 />
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
                 <TextField
                   label="Number of Players"
                   type="number"
@@ -294,18 +326,14 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   label="Desired Time"
                   type="time"
                   value={desiredTime}
-                  onChange={(event) => {
-                    if (
-                      event.target.value < earliestTime ||
-                      event.target.value > latestTime
-                    ) {
-                      setSnackError(
-                        "Desired time must be between earliest and latest time"
-                      );
-                      return;
-                    }
-                    setDesiredTime(event.target.value);
-                  }}
+                  onChange={(event) => setDesiredTime(event.target.value)}
+                  onBlur={validateDesiredTime}
+                  error={desiredTimeError}
+                  helperText={
+                    desiredTimeError
+                      ? "Desired time must be between earliest and latest time"
+                      : ""
+                  }
                   fullWidth
                   required
                   sx={{ mb: 2 }}
