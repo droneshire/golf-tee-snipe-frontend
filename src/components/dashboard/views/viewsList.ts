@@ -7,6 +7,7 @@ import { SvgIconComponent } from "@mui/icons-material";
 import PreferencesView from "./PreferencesView";
 import { User } from "firebase/auth";
 import { ADMIN_USERS } from "utils/constants";
+import AccountsView from "./AccountsView";
 
 export interface DashbardViewSpec {
   key: string;
@@ -22,6 +23,13 @@ const viewsList: DashbardViewSpec[] = [
     label: "Preferences",
     icon: SettingsIcon,
     component: PreferencesView,
+    adminOnly: false,
+  },
+  {
+    key: "accounts",
+    label: "Accounts",
+    icon: AdminPanelSettingsIcon,
+    component: AccountsView,
     adminOnly: false,
   },
 ];
