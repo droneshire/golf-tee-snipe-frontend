@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import GolfCourseIcon from "@mui/icons-material/GolfCourse";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { SvgIconComponent } from "@mui/icons-material";
 
@@ -19,17 +19,17 @@ export interface DashbardViewSpec {
 
 const viewsList: DashbardViewSpec[] = [
   {
+    key: "accounts",
+    label: "Accounts",
+    icon: GolfCourseIcon,
+    component: AccountsView,
+    adminOnly: false,
+  },
+  {
     key: "preferences",
     label: "Preferences",
     icon: SettingsIcon,
     component: PreferencesView,
-    adminOnly: false,
-  },
-  {
-    key: "accounts",
-    label: "Accounts",
-    icon: AdminPanelSettingsIcon,
-    component: AccountsView,
     adminOnly: false,
   },
 ];

@@ -1,5 +1,6 @@
 import {
   Alert,
+  Box,
   Button,
   Checkbox,
   Dialog,
@@ -9,17 +10,17 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
+  Grid,
   Menu,
   MenuItem,
   Snackbar,
   TextField,
-  Typography,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import React, { useEffect } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
-import { AccountType, DaysOfWeek, Times } from "types/user";
+import { AccountType, Courses, DaysOfWeek, Times } from "types/user";
 
 interface NewAccountDialogProps {
   open: boolean;
@@ -29,6 +30,10 @@ interface NewAccountDialogProps {
   inputAccount?: AccountType;
 }
 
+const DefaultStartTime = "06:00";
+const DefaultEndTime = "18:00";
+const DefaultDesiredTime = "08:00";
+
 const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const [dayMenuAnchorEl, setDayMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -36,7 +41,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     React.useState<null | HTMLElement>(null);
 
   const dayMenuOpen = Boolean(dayMenuAnchorEl);
-  const courseMenuOpen = Boolean(dayMenuAnchorEl);
+  const courseMenuOpen = Boolean(courseMenuAnchorEl);
 
   const [email, setEmail] = React.useState<string>("");
   const [courses, setCourses] = React.useState<string[]>([]);
@@ -44,14 +49,19 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const [numPlayers, setNumPlayers] = React.useState<number[]>([]);
   const [timeOfDay, setTimeOfDay] = React.useState<string>(Times.ALL);
   const [numHoles, setNumHoles] = React.useState<number>(18);
-  const [desiredTime, setDesiredTime] = React.useState<string>("");
-  const [earliestTime, setEarliestTime] = React.useState<string>("");
-  const [latestTime, setLatestTime] = React.useState<string>("");
+  const [desiredTime, setDesiredTime] =
+    React.useState<string>(DefaultDesiredTime);
+  const [earliestTime, setEarliestTime] =
+    React.useState<string>(DefaultStartTime);
+  const [latestTime, setLatestTime] = React.useState<string>(DefaultEndTime);
   const [targetDays, setTargetDays] = React.useState<string[]>([]);
   const [allowMultipleReservations, setAllowMultipleReservations] =
     React.useState<boolean>(false);
   const [allowNextDayBooking, setAllowNextDayBooking] =
     React.useState<boolean>(false);
+
+  const [snackError, setSnackError] = React.useState<string | null>(null);
+  const clearSnackError = () => setSnackError(null);
 
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const {
@@ -61,7 +71,14 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     clearError,
   } = useAsyncAction(props.createAccount);
 
-  const handleMediaTypeMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const clearAllErrors = () => {
+    clearSnackError();
+    if (clearError) {
+      clearError();
+    }
+  };
+
+  const handleDayMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setDayMenuAnchorEl(event.currentTarget);
   };
 
@@ -144,25 +161,29 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
       return;
     }
 
-    const success = await doCreateAccount({
-      accountId: email,
-      email,
-      password,
-      scheduleIds: [],
-      numPlayers,
-      timeOfDay,
-      numHoles,
-      desiredTime,
-      earliestTime,
-      latestTime,
-      targetDays,
-      allowMultipleReservations,
-      allowNextDayBooking,
-    });
+    try {
+      const success: boolean = await doCreateAccount({
+        accountId: email,
+        email,
+        password,
+        scheduleIds: [],
+        numPlayers,
+        timeOfDay,
+        numHoles,
+        desiredTime,
+        earliestTime,
+        latestTime,
+        targetDays,
+        allowMultipleReservations,
+        allowNextDayBooking,
+      });
 
-    if (success) {
-      reset();
-      props.onClose();
+      if (success) {
+        reset();
+        props.onClose();
+      }
+    } catch (error: any) {
+      setSnackError(error.message);
     }
   }, [
     disabled,
@@ -199,128 +220,187 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
           {props.inputAccount?.email ? "Edit" : "Add"} Account
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            This adds a new account to the system for tee time booking.
-          </DialogContentText>
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            fullWidth
-            required
-            autoFocus
-          />
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Number of Players"
-            type="number"
-            value={numPlayers.join(",")}
-            onChange={(event) =>
-              setNumPlayers(event.target.value.split(",").map(Number))
-            }
-            fullWidth
-            required
-          />
-          <TextField
-            label="Number of Holes"
-            type="number"
-            value={numHoles}
-            onChange={(event) => setNumHoles(Number(event.target.value))}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Desired Time"
-            type="time"
-            value={desiredTime}
-            onChange={(event) => setDesiredTime(event.target.value)}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Earliest Time"
-            type="time"
-            value={earliestTime}
-            onChange={(event) => setEarliestTime(event.target.value)}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Latest Time"
-            type="time"
-            value={latestTime}
-            onChange={(event) => setLatestTime(event.target.value)}
-            fullWidth
-            required
-          />
-          <FormControl fullWidth>
-            <Button
-              onClick={handleMediaTypeMenuOpen}
-              endIcon={<KeyboardArrowDownIcon />}
-            >
-              Target Days
-            </Button>
-            <Menu
-              anchorEl={dayMenuAnchorEl}
-              open={dayMenuOpen}
-              onClose={handleDayMenuClose}
-            >
-              {Object.values(DaysOfWeek).map((day) => (
-                <MenuItem key={day} onClick={() => handleDaySelect(day)}>
-                  <FormControlLabel control={<Checkbox />} label={day} />
-                </MenuItem>
-              ))}
-            </Menu>
-          </FormControl>
-          <FormControl fullWidth>
-            <Button
-              onClick={handleCourseMenuOpen}
-              endIcon={<KeyboardArrowDownIcon />}
-            >
-              Courses
-            </Button>
-            <Menu
-              anchorEl={courseMenuAnchorEl}
-              open={courseMenuOpen}
-              onClose={handleCourseMenuClose}
-            >
-              {["Course 1", "Course 2"].map((course) => (
-                <MenuItem
-                  key={course}
-                  onClick={() => handleCourseSelect(course)}
+          <Grid container spacing={2}>
+            {/* Text fields stacked vertically */}
+            <Grid item xs={12}>
+              <Box>
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  fullWidth
+                  required
+                  autoFocus
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Number of Players"
+                  type="number"
+                  value={numPlayers.join(",")}
+                  onChange={(event) =>
+                    setNumPlayers(event.target.value.split(",").map(Number))
+                  }
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Number of Holes"
+                  type="number"
+                  value={numHoles}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    if (value !== 9 && value !== 18) {
+                      setSnackError("Number of holes must be 9 or 18");
+                      return;
+                    }
+                    setNumHoles(value);
+                  }}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Desired Time"
+                  type="time"
+                  value={desiredTime}
+                  onChange={(event) => {
+                    console.log("Desired: ", event.target.value);
+                    if (
+                      event.target.value < earliestTime ||
+                      event.target.value > latestTime
+                    ) {
+                      setSnackError(
+                        "Desired time must be between earliest and latest time"
+                      );
+                      return;
+                    }
+                    setDesiredTime(event.target.value);
+                  }}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Earliest Time"
+                  type="time"
+                  value={earliestTime}
+                  onChange={(event) => {
+                    if (event.target.value > latestTime) {
+                      setSnackError(
+                        "Earliest time cannot be later than latest time"
+                      );
+                      return;
+                    }
+                    setEarliestTime(event.target.value);
+                  }}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Latest Time"
+                  type="time"
+                  value={latestTime}
+                  onChange={(event) => {
+                    if (event.target.value < earliestTime) {
+                      setSnackError(
+                        "Latest time cannot be earlier than earliest time"
+                      );
+                      return;
+                    }
+                    setLatestTime(event.target.value);
+                  }}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+              </Box>
+            </Grid>
+            {/* Select menus flexed horizontally */}
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <Button
+                  onClick={handleDayMenuOpen}
+                  endIcon={<KeyboardArrowDownIcon />}
+                  sx={{ mb: 2 }}
                 >
-                  <FormControlLabel control={<Checkbox />} label={course} />
-                </MenuItem>
-              ))}
-            </Menu>
-          </FormControl>
-          <FormControl fullWidth>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Allow Multiple Reservations"
-              checked={allowMultipleReservations}
-              onChange={() =>
-                setAllowMultipleReservations(!allowMultipleReservations)
-              }
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Allow Next Day Booking"
-              checked={allowNextDayBooking}
-              onChange={() => setAllowNextDayBooking(!allowNextDayBooking)}
-            />
-          </FormControl>
+                  Target Days
+                </Button>
+                <Menu
+                  anchorEl={dayMenuAnchorEl}
+                  open={dayMenuOpen}
+                  onClose={handleDayMenuClose}
+                >
+                  {Object.values(DaysOfWeek).map((day) => (
+                    <MenuItem key={day} onClick={() => handleDaySelect(day)}>
+                      <FormControlLabel control={<Checkbox />} label={day} />
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <Button
+                  onClick={handleCourseMenuOpen}
+                  endIcon={<KeyboardArrowDownIcon />}
+                  sx={{ mb: 2 }}
+                >
+                  Courses
+                </Button>
+                <Menu
+                  anchorEl={courseMenuAnchorEl}
+                  open={courseMenuOpen}
+                  onClose={handleCourseMenuClose}
+                >
+                  {Object.keys(Courses).map((course) => (
+                    <MenuItem
+                      key={course}
+                      onClick={() => handleCourseSelect(course)}
+                    >
+                      <FormControlLabel control={<Checkbox />} label={course} />
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </FormControl>
+            </Grid>
+            {/* Checkboxes stacked vertically */}
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Allow Multiple Reservations"
+                  checked={allowMultipleReservations}
+                  onChange={() =>
+                    setAllowMultipleReservations(!allowMultipleReservations)
+                  }
+                  sx={{ mb: 2 }}
+                />
+              </FormControl>
+              <FormControl fullWidth>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Allow Next Day Booking"
+                  checked={allowNextDayBooking}
+                  onChange={() => setAllowNextDayBooking(!allowNextDayBooking)}
+                  sx={{ mb: 2 }}
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button type="submit" disabled={disabled} autoFocus>
@@ -328,8 +408,12 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={!!error} autoHideDuration={5000} onClose={clearError}>
-        <Alert onClose={clearError} severity="error" sx={{ width: "100%" }}>
+      <Snackbar
+        open={!!error && !!snackError}
+        autoHideDuration={5000}
+        onClose={clearAllErrors}
+      >
+        <Alert onClose={clearAllErrors} severity="error" sx={{ width: "100%" }}>
           {`Failed to create alert: ${error}`}
         </Alert>
       </Snackbar>
