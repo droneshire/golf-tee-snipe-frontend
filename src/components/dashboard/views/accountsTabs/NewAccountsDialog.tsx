@@ -94,18 +94,21 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     setCourseMenuAnchorEl(null);
   };
 
-  const handleDaySelect = (days: DaysOfWeek) => {
-    const newWeekdays = new Set(targetDays);
-    newWeekdays.add(days);
-    setTargetDays(Array.from(newWeekdays));
-    handleDayMenuClose();
+  const handleDaySelect = (day: DaysOfWeek) => {
+    setTargetDays((prevDays) =>
+      prevDays.includes(day)
+        ? prevDays.filter((d) => d !== day)
+        : [...prevDays, day]
+    );
   };
 
   const handleCourseSelect = (course: string) => {
-    const newCourses = new Set(courses);
-    newCourses.add(course);
-    setCourses(Array.from(newCourses));
-    handleCourseMenuClose();
+    console.log("Course: ", course, courses);
+    setCourses((prevCourses) =>
+      prevCourses.includes(course)
+        ? prevCourses.filter((c) => c !== course)
+        : [...prevCourses, course]
+    );
   };
 
   const handleClose = () => {
@@ -119,9 +122,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     setNumPlayers([]);
     setTimeOfDay(Times.ALL);
     setNumHoles(18);
-    setDesiredTime("");
-    setEarliestTime("");
-    setLatestTime("");
+    setDesiredTime(DefaultDesiredTime);
+    setEarliestTime(DefaultStartTime);
+    setLatestTime(DefaultEndTime);
     setTargetDays([]);
     setAllowMultipleReservations(false);
     setAllowNextDayBooking(false);
@@ -129,6 +132,19 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
 
   useEffect(() => {
     if (props.inputAccount) {
+      setEmail(props.inputAccount.email);
+      setPassword(""); 
+      setNumPlayers(props.inputAccount.numPlayers);
+      setTimeOfDay(props.inputAccount.timeOfDay);
+      setNumHoles(props.inputAccount.numHoles);
+      setDesiredTime(props.inputAccount.desiredTime);
+      setEarliestTime(props.inputAccount.earliestTime);
+      setLatestTime(props.inputAccount.latestTime);
+      setTargetDays(props.inputAccount.targetDays);
+      setAllowMultipleReservations(
+        props.inputAccount.allowMultipleReservations
+      );
+      setAllowNextDayBooking(props.inputAccount.allowNextDayBooking);
     }
   }, [props.inputAccount]);
 
@@ -157,12 +173,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   ]);
 
   const doSubmit = React.useCallback(async () => {
-    if (disabled) {
-      return;
-    }
-
+    if (disabled) return;
     try {
-      const success: boolean = await doCreateAccount({
+      const success = await doCreateAccount({
         accountId: email,
         email,
         password,
@@ -182,8 +195,8 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         reset();
         props.onClose();
       }
-    } catch (error: any) {
-      setSnackError(error.message);
+    } catch (err) {
+      setSnackError("Failed to create account.");
     }
   }, [
     disabled,
@@ -344,7 +357,12 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                 >
                   {Object.values(DaysOfWeek).map((day) => (
                     <MenuItem key={day} onClick={() => handleDaySelect(day)}>
-                      <FormControlLabel control={<Checkbox />} label={day} />
+                      <FormControlLabel
+                        control={
+                          <Checkbox checked={targetDays.includes(day)} />
+                        }
+                        label={day}
+                      />
                     </MenuItem>
                   ))}
                 </Menu>
@@ -369,7 +387,12 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                       key={course}
                       onClick={() => handleCourseSelect(course)}
                     >
-                      <FormControlLabel control={<Checkbox />} label={course} />
+                      <FormControlLabel
+                        control={
+                          <Checkbox checked={courses.includes(course)} />
+                        }
+                        label={course}
+                      />
                     </MenuItem>
                   ))}
                 </Menu>
