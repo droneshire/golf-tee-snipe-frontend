@@ -131,19 +131,19 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
 
   useEffect(() => {
     if (props.inputAccount) {
-      setEmail(props.inputAccount.email);
-      setPassword(""); 
-      setNumPlayers(props.inputAccount.numPlayers);
-      setTimeOfDay(props.inputAccount.timeOfDay);
-      setNumHoles(props.inputAccount.numHoles);
-      setDesiredTime(props.inputAccount.desiredTime);
-      setEarliestTime(props.inputAccount.earliestTime);
-      setLatestTime(props.inputAccount.latestTime);
-      setTargetDays(props.inputAccount.targetDays);
+      setEmail(props.inputAccount.email || "");
+      setPassword("");
+      setNumPlayers(props.inputAccount.numPlayers || []);
+      setTimeOfDay(props.inputAccount.timeOfDay || Times.ALL);
+      setNumHoles(props.inputAccount.numHoles || 18);
+      setDesiredTime(props.inputAccount.desiredTime || DefaultDesiredTime);
+      setEarliestTime(props.inputAccount.earliestTime || DefaultStartTime);
+      setLatestTime(props.inputAccount.latestTime || DefaultEndTime);
+      setTargetDays(props.inputAccount.targetDays || []);
       setAllowMultipleReservations(
-        props.inputAccount.allowMultipleReservations
+        props.inputAccount.allowMultipleReservations || false
       );
-      setAllowNextDayBooking(props.inputAccount.allowNextDayBooking);
+      setAllowNextDayBooking(props.inputAccount.allowNextDayBooking || false);
     }
   }, [props.inputAccount]);
 
@@ -355,10 +355,13 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   onClose={handleDayMenuClose}
                 >
                   {Object.values(DaysOfWeek).map((day) => (
-                    <MenuItem key={day} onClick={() => handleDaySelect(day)}>
+                    <MenuItem key={day}>
                       <FormControlLabel
                         control={
-                          <Checkbox checked={targetDays.includes(day)} />
+                          <Checkbox
+                            checked={targetDays.includes(day)}
+                            onClick={() => handleDaySelect(day)}
+                          />
                         }
                         label={day}
                       />
@@ -382,13 +385,13 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   onClose={handleCourseMenuClose}
                 >
                   {Object.keys(Courses).map((course) => (
-                    <MenuItem
-                      key={course}
-                      onClick={() => handleCourseSelect(course)}
-                    >
+                    <MenuItem key={course}>
                       <FormControlLabel
                         control={
-                          <Checkbox checked={courses.includes(course)} />
+                          <Checkbox
+                            checked={courses.includes(course)}
+                            onClick={() => handleCourseSelect(course)}
+                          />
                         }
                         label={course}
                       />
