@@ -84,18 +84,14 @@ export const AccountListGroup: FC<{
                   label="Select All/None"
                 />
               </TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Password</TableCell>
-              <TableCell>ScheduleIds </TableCell>
+              <TableCell>Courses </TableCell>
               <TableCell>Players </TableCell>
-              <TableCell>Time Of Day</TableCell>
               <TableCell>Holes</TableCell>
               <TableCell>Desired Time</TableCell>
-              <TableCell>Earliest Time</TableCell>
-              <TableCell>Latest Time</TableCell>
+              <TableCell>Time Range</TableCell>
               <TableCell>Target Days </TableCell>
-              <TableCell>Allow Multiple Reservations</TableCell>
-              <TableCell>Allow Next Day Booking </TableCell>
+              <TableCell>Multiple Bookings?</TableCell>
+              <TableCell>Next Day Booking?</TableCell>
               <TableCell sx={{ textAlign: "right" }}>
                 <Button onClick={handleActionMenuClick}>Actions</Button>
                 <Menu

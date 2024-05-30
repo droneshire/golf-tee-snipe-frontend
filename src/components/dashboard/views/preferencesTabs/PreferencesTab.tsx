@@ -27,11 +27,11 @@ const NotificationsTab: FC<{
             <FirestoreBackedSwitch
               disabled={updatingAnything}
               docSnap={userConfigSnapshot!}
-              fieldPath="preferences.notifications.email.updatesEnabled"
+              fieldPath="preferences.notifications.sms.updatesEnabled"
               checkBox
             />
           }
-          label="Email updates"
+          label="SMS updates enabled"
         />
       </FormGroup>
       <Divider sx={{ marginTop: 2, marginBottom: 4 }} />

@@ -32,17 +32,6 @@ const NotificationsTab: FC<{
           sx={{ maxWidth: 300 }}
           InputProps={{ inputComponent: EmailInput as any }}
         />
-        <FormControlLabel
-          control={
-            <FirestoreBackedSwitch
-              disabled={updatingAnything}
-              docSnap={userConfigSnapshot!}
-              fieldPath="preferences.notifications.email.updatesEnabled"
-              checkBox
-            />
-          }
-          label="Email updates"
-        />
       </FormGroup>
     </>
   );

@@ -93,15 +93,11 @@ export const Account: FC<AccountProps> = ({
           )}
         </Tooltip>
       </TableCell>
-      <TableCell>{email}</TableCell>
-      <TableCell>{password}</TableCell>
       <TableCell>{scheduleIds.join(", ")}</TableCell>
       <TableCell>{numPlayers}</TableCell>
-      <TableCell>{timeOfDay}</TableCell>
       <TableCell>{numHoles}</TableCell>
       <TableCell>{desiredTime}</TableCell>
-      <TableCell>{earliestTime}</TableCell>
-      <TableCell>{latestTime}</TableCell>
+      <TableCell>{`${earliestTime}-${latestTime}`}</TableCell>
       <TableCell>{targetDays.join(", ")}</TableCell>
       <TableCell>{allowMultipleReservations ? "Yes" : "No"}</TableCell>
       <TableCell>{allowNextDayBooking ? "Yes" : "No"}</TableCell>

@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  InputAdornment,
   Menu,
   MenuItem,
   Snackbar,
@@ -70,7 +71,6 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const {
     runAction: doCreateAccount,
-    running: creatingAccount,
     error,
     clearError,
   } = useAsyncAction(props.createAccount);
@@ -91,6 +91,14 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
       setSnackError(null);
     }
   };
+
+  const endAdornment = (
+    <InputAdornment position="end">
+      <IconButton onClick={() => setShowPassword(!showPassword)}>
+        {showPassword ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    </InputAdornment>
+  );
 
   const clearAllErrors = () => {
     clearSnackError();
@@ -148,6 +156,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     setTargetDays([]);
     setAllowMultipleReservations(false);
     setAllowNextDayBooking(false);
+    setCourses([]);
   }, []);
 
   useEffect(() => {
@@ -165,6 +174,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         props.inputAccount.allowMultipleReservations || false
       );
       setAllowNextDayBooking(props.inputAccount.allowNextDayBooking || false);
+      setCourses(props.inputAccount.scheduleIds || []);
     }
   }, [props.inputAccount]);
 
@@ -177,8 +187,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         timeOfDay &&
         desiredTime &&
         earliestTime &&
-        latestTime &&
-        targetDays.length > 0
+        latestTime
       )
     );
   }, [
@@ -189,7 +198,6 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     desiredTime,
     earliestTime,
     latestTime,
-    targetDays,
   ]);
 
   const doSubmit = React.useCallback(async () => {
@@ -211,7 +219,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         accountId: email,
         email,
         password,
-        scheduleIds: [],
+        scheduleIds: courses,
         numPlayers,
         timeOfDay,
         numHoles,
@@ -264,9 +272,11 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         <DialogTitle>
           {props.inputAccount?.email ? "Edit" : "Add"} Account
         </DialogTitle>
-        <DialogContentText>
-          Please fill out the info for the new account.
-        </DialogContentText>
+        <Box sx={{ paddingX: 3 }}>
+          <DialogContentText>
+            Please fill out the info for the new account.
+          </DialogContentText>
+        </Box>
         <DialogContent>
           <Grid container spacing={2}>
             {/* Text fields stacked vertically */}
@@ -288,18 +298,13 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   InputProps={{
+                    endAdornment,
                     type: showPassword ? "text" : "password",
                   }}
                   fullWidth
                   required
                   sx={{ mb: 2 }}
                 />
-                <IconButton
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
                 <TextField
                   label="Number of Players"
                   type="number"

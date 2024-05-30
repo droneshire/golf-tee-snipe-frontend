@@ -46,6 +46,9 @@ export interface Preferences {
       email: string;
       updatesEnabled: boolean;
     };
+    sms: {
+      updatesEnabled: boolean;
+    };
   };
 }
 
@@ -74,6 +77,7 @@ export const DEFAULT_USER_CONFIG: ClientConfig = {
   preferences: {
     notifications: {
       email: { email: "", updatesEnabled: true },
+      sms: { updatesEnabled: false },
     },
   },
   accounts: {},
