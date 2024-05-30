@@ -46,7 +46,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const [email, setEmail] = React.useState<string>("");
   const [courses, setCourses] = React.useState<string[]>([]);
   const [password, setPassword] = React.useState<string>("");
-  const [numPlayers, setNumPlayers] = React.useState<number[]>([]);
+  const [numPlayers, setNumPlayers] = React.useState<number>(4);
   const [timeOfDay, setTimeOfDay] = React.useState<string>(Times.ALL);
   const [numHoles, setNumHoles] = React.useState<number>(18);
   const [desiredTime, setDesiredTime] =
@@ -118,7 +118,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const reset = React.useCallback(() => {
     setEmail("");
     setPassword("");
-    setNumPlayers([]);
+    setNumPlayers(4);
     setTimeOfDay(Times.ALL);
     setNumHoles(18);
     setDesiredTime(DefaultDesiredTime);
@@ -133,7 +133,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     if (props.inputAccount) {
       setEmail(props.inputAccount.email || "");
       setPassword("");
-      setNumPlayers(props.inputAccount.numPlayers || []);
+      setNumPlayers(Number(props.inputAccount.numPlayers) || 4);
       setTimeOfDay(props.inputAccount.timeOfDay || Times.ALL);
       setNumHoles(props.inputAccount.numHoles || 18);
       setDesiredTime(props.inputAccount.desiredTime || DefaultDesiredTime);
@@ -152,7 +152,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
       !(
         email &&
         password &&
-        numPlayers.length > 0 &&
+        numPlayers &&
         timeOfDay &&
         desiredTime &&
         earliestTime &&
@@ -174,6 +174,19 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   const doSubmit = React.useCallback(async () => {
     if (disabled) return;
     try {
+      if (
+        desiredTime < earliestTime ||
+        desiredTime > latestTime ||
+        earliestTime > latestTime ||
+        targetDays.length === 0 ||
+        (numHoles !== 9 && numHoles !== 18) ||
+        numPlayers < 1 ||
+        numPlayers > 4
+      ) {
+        setSnackError("Invalid time range");
+        return;
+      }
+
       const success = await doCreateAccount({
         accountId: email,
         email,
@@ -258,9 +271,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                 <TextField
                   label="Number of Players"
                   type="number"
-                  value={numPlayers.join(",")}
+                  value={numPlayers}
                   onChange={(event) =>
-                    setNumPlayers(event.target.value.split(",").map(Number))
+                    setNumPlayers(Number(event.target.value))
                   }
                   fullWidth
                   required
@@ -271,12 +284,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   type="number"
                   value={numHoles}
                   onChange={(event) => {
-                    const value = Number(event.target.value);
-                    if (value !== 9 && value !== 18) {
-                      setSnackError("Number of holes must be 9 or 18");
-                      return;
-                    }
-                    setNumHoles(value);
+                    setNumHoles(Number(event.target.value));
                   }}
                   fullWidth
                   required
@@ -429,7 +437,10 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button type="submit" disabled={disabled} autoFocus>
-            {props.inputAccount ? "Update" : "Create"} Account
+            {props.inputAccount && props.inputAccount?.email
+              ? "Update"
+              : "Create"}{" "}
+            Account
           </Button>
         </DialogActions>
       </Dialog>

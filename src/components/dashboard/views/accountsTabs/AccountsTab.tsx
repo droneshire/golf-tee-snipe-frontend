@@ -106,7 +106,7 @@ const AccountsTab: FC<{
           const { accountId, ...item } = accountSpec;
           updateDoc(
             userConfigSnapshot.ref,
-            new FieldPath("watchers", "accounts", accountId),
+            new FieldPath("accounts", accountId),
             item
           );
         }}

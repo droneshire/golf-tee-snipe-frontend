@@ -53,7 +53,7 @@ export interface AccountType {
   email: string;
   password: string;
   scheduleIds: string[];
-  numPlayers: number[];
+  numPlayers: number;
   timeOfDay: string;
   numHoles: number;
   desiredTime: string;

@@ -23,7 +23,7 @@ export const DEFAULT_ACCOUNT_SPEC: AccountSpec = {
   email: "",
   password: "",
   scheduleIds: [],
-  numPlayers: [],
+  numPlayers: 4,
   timeOfDay: "",
   numHoles: 0,
   desiredTime: "",
@@ -96,7 +96,7 @@ export const Account: FC<AccountProps> = ({
       <TableCell>{email}</TableCell>
       <TableCell>{password}</TableCell>
       <TableCell>{scheduleIds.join(", ")}</TableCell>
-      <TableCell>{numPlayers.join(", ")}</TableCell>
+      <TableCell>{numPlayers}</TableCell>
       <TableCell>{timeOfDay}</TableCell>
       <TableCell>{numHoles}</TableCell>
       <TableCell>{desiredTime}</TableCell>
