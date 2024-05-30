@@ -103,7 +103,6 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   };
 
   const handleCourseSelect = (course: string) => {
-    console.log("Course: ", course, courses);
     setCourses((prevCourses) =>
       prevCourses.includes(course)
         ? prevCourses.filter((c) => c !== course)
