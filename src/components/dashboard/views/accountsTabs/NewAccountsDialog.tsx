@@ -295,7 +295,6 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   type="time"
                   value={desiredTime}
                   onChange={(event) => {
-                    console.log("Desired: ", event.target.value);
                     if (
                       event.target.value < earliestTime ||
                       event.target.value > latestTime
