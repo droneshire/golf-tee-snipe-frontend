@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
 import { AccountType, Courses, DaysOfWeek, Times } from "types/user";
@@ -37,45 +37,47 @@ const DefaultStartTime = "06:00";
 const DefaultEndTime = "18:00";
 const DefaultDesiredTime = "08:00";
 
-const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
-  const [dayMenuAnchorEl, setDayMenuAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
+  open,
+  onClose,
+  createAccount,
+  inputAccount,
+}) => {
+  const [dayMenuAnchorEl, setDayMenuAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const [courseMenuAnchorEl, setCourseMenuAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+    useState<null | HTMLElement>(null);
 
-  const dayMenuOpen = Boolean(dayMenuAnchorEl);
-  const courseMenuOpen = Boolean(courseMenuAnchorEl);
-
-  const [email, setEmail] = React.useState<string>("");
-  const [courses, setCourses] = React.useState<string[]>([]);
-  const [password, setPassword] = React.useState<string>("");
-  const [numPlayers, setNumPlayers] = React.useState<number>(4);
-  const [timeOfDay, setTimeOfDay] = React.useState<string>(Times.ALL);
-  const [numHoles, setNumHoles] = React.useState<number>(18);
-  const [desiredTime, setDesiredTime] =
-    React.useState<string>(DefaultDesiredTime);
-  const [earliestTime, setEarliestTime] =
-    React.useState<string>(DefaultStartTime);
-  const [latestTime, setLatestTime] = React.useState<string>(DefaultEndTime);
-  const [targetDays, setTargetDays] = React.useState<string[]>([]);
+  const [email, setEmail] = useState<string>("");
+  const [courses, setCourses] = useState<string[]>([]);
+  const [password, setPassword] = useState<string>("");
+  const [numPlayers, setNumPlayers] = useState<number>(4);
+  const [timeOfDay, setTimeOfDay] = useState<string>(Times.ALL);
+  const [numHoles, setNumHoles] = useState<number>(18);
+  const [desiredTime, setDesiredTime] = useState<string>(DefaultDesiredTime);
+  const [earliestTime, setEarliestTime] = useState<string>(DefaultStartTime);
+  const [latestTime, setLatestTime] = useState<string>(DefaultEndTime);
+  const [targetDays, setTargetDays] = useState<string[]>([]);
   const [allowMultipleReservations, setAllowMultipleReservations] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
   const [allowNextDayBooking, setAllowNextDayBooking] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
 
-  const [snackError, setSnackError] = React.useState<string | null>(null);
+  const [snackError, setSnackError] = useState<string | null>(null);
   const clearSnackError = () => setSnackError(null);
-  const [desiredTimeError, setDesiredTimeError] = React.useState(false);
+  const [desiredTimeError, setDesiredTimeError] = useState(false);
 
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [disabled, setDisabled] = React.useState<boolean>(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
+
   const {
     runAction: doCreateAccount,
     error,
     clearError,
-  } = useAsyncAction(props.createAccount);
+  } = useAsyncAction(createAccount);
 
-  const isEditing = props.inputAccount && props.inputAccount?.email;
+  const isEditing = inputAccount && inputAccount.email;
 
   const validateDesiredTime = () => {
     if (desiredTime < earliestTime || desiredTime > latestTime) {
@@ -97,9 +99,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
 
   const clearAllErrors = () => {
     clearSnackError();
-    if (clearError) {
-      clearError();
-    }
+    clearError();
   };
 
   const handleDayMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -135,11 +135,11 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   };
 
   const handleClose = () => {
-    props.onClose();
+    onClose();
     reset();
   };
 
-  const reset = React.useCallback(() => {
+  const reset = useCallback(() => {
     setEmail("");
     setPassword("");
     setNumPlayers(4);
@@ -155,23 +155,23 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.inputAccount) {
-      setEmail(props.inputAccount.email || "");
-      setPassword(props.inputAccount.password || "");
-      setNumPlayers(Number(props.inputAccount.numPlayers) || 4);
-      setTimeOfDay(props.inputAccount.timeOfDay || Times.ALL);
-      setNumHoles(props.inputAccount.numHoles || 18);
-      setDesiredTime(props.inputAccount.desiredTime || DefaultDesiredTime);
-      setEarliestTime(props.inputAccount.earliestTime || DefaultStartTime);
-      setLatestTime(props.inputAccount.latestTime || DefaultEndTime);
-      setTargetDays(props.inputAccount.targetDays || []);
+    if (inputAccount) {
+      setEmail(inputAccount.email || "");
+      setPassword(inputAccount.password || "");
+      setNumPlayers(Number(inputAccount.numPlayers) || 4);
+      setTimeOfDay(inputAccount.timeOfDay || Times.ALL);
+      setNumHoles(inputAccount.numHoles || 18);
+      setDesiredTime(inputAccount.desiredTime || DefaultDesiredTime);
+      setEarliestTime(inputAccount.earliestTime || DefaultStartTime);
+      setLatestTime(inputAccount.latestTime || DefaultEndTime);
+      setTargetDays(inputAccount.targetDays || []);
       setAllowMultipleReservations(
-        props.inputAccount.allowMultipleReservations || false
+        inputAccount.allowMultipleReservations || false
       );
-      setAllowNextDayBooking(props.inputAccount.allowNextDayBooking || false);
-      setCourses(props.inputAccount.scheduleIds || []);
+      setAllowNextDayBooking(inputAccount.allowNextDayBooking || false);
+      setCourses(inputAccount.scheduleIds || []);
     }
-  }, [props.inputAccount]);
+  }, [inputAccount]);
 
   useEffect(() => {
     setDisabled(
@@ -195,7 +195,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     latestTime,
   ]);
 
-  const doSubmit = React.useCallback(async () => {
+  const doSubmit = useCallback(async () => {
     if (disabled) return;
     try {
       if (
@@ -246,15 +246,16 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     targetDays,
     allowMultipleReservations,
     allowNextDayBooking,
+    courses,
     reset,
-    props.onClose,
+    onClose,
   ]);
 
   return (
     <>
       <Dialog
-        open={props.open}
-        onClose={props.onClose}
+        open={open}
+        onClose={onClose}
         PaperProps={{
           component: "form",
           onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -263,9 +264,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
           },
         }}
       >
-        <DialogTitle>
-          {props.inputAccount?.email ? "Edit" : "Add"} Account
-        </DialogTitle>
+        <DialogTitle>{isEditing ? "Edit" : "Add"} Account</DialogTitle>
         <Box sx={{ paddingX: 3 }}>
           <DialogContentText>
             Please fill out the info for the new account.
@@ -314,9 +313,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                   label="Number of Holes"
                   type="number"
                   value={numHoles}
-                  onChange={(event) => {
-                    setNumHoles(Number(event.target.value));
-                  }}
+                  onChange={(event) => setNumHoles(Number(event.target.value))}
                   fullWidth
                   required
                   sx={{ mb: 2 }}
@@ -385,7 +382,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                 </Button>
                 <Menu
                   anchorEl={dayMenuAnchorEl}
-                  open={dayMenuOpen}
+                  open={Boolean(dayMenuAnchorEl)}
                   onClose={handleDayMenuClose}
                 >
                   {Object.values(DaysOfWeek).map((day) => (
@@ -394,7 +391,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                         control={
                           <Checkbox
                             checked={targetDays.includes(day)}
-                            onClick={() => handleDaySelect(day)}
+                            onChange={() => handleDaySelect(day)}
                           />
                         }
                         label={day}
@@ -415,7 +412,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                 </Button>
                 <Menu
                   anchorEl={courseMenuAnchorEl}
-                  open={courseMenuOpen}
+                  open={Boolean(courseMenuAnchorEl)}
                   onClose={handleCourseMenuClose}
                 >
                   {Object.keys(Courses).map((course) => (
