@@ -24,6 +24,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
 import { AccountType, Courses, DaysOfWeek, Times } from "types/user";
+import { isValidPhone } from "utils/validators";
 
 interface NewAccountDialogProps {
   open: boolean;
@@ -50,6 +51,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     useState<null | HTMLElement>(null);
 
   const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [courses, setCourses] = useState<string[]>([]);
   const [password, setPassword] = useState<string>("");
   const [numPlayers, setNumPlayers] = useState<number>(4);
@@ -65,6 +67,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     useState<boolean>(false);
 
   const [snackError, setSnackError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const clearSnackError = () => setSnackError(null);
   const [desiredTimeError, setDesiredTimeError] = useState(false);
 
@@ -141,6 +144,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
 
   const reset = useCallback(() => {
     setEmail("");
+    setPhone("");
     setPassword("");
     setNumPlayers(4);
     setTimeOfDay(Times.ALL);
@@ -157,6 +161,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
   useEffect(() => {
     if (inputAccount) {
       setEmail(inputAccount.email || "");
+      setPhone(inputAccount.phone || "");
       setPassword(inputAccount.password || "");
       setNumPlayers(Number(inputAccount.numPlayers) || 4);
       setTimeOfDay(inputAccount.timeOfDay || Times.ALL);
@@ -197,6 +202,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
 
   const doSubmit = useCallback(async () => {
     if (disabled) return;
+
     try {
       if (
         desiredTime < earliestTime ||
@@ -204,7 +210,8 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         earliestTime > latestTime ||
         (numHoles !== 9 && numHoles !== 18) ||
         numPlayers < 1 ||
-        numPlayers > 4
+        numPlayers > 4 ||
+        !isValidPhone(phone)
       ) {
         setSnackError("Invalid entries");
         return;
@@ -213,6 +220,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
       const success = await doCreateAccount({
         accountId: email,
         email,
+        phone,
         password,
         scheduleIds: courses,
         numPlayers,
@@ -237,6 +245,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     doCreateAccount,
     email,
     password,
+    phone,
     numPlayers,
     timeOfDay,
     numHoles,
@@ -296,6 +305,33 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
                   }}
                   fullWidth
                   required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Phone"
+                  type="phone"
+                  value={phone}
+                  onChange={(event) => {
+                    let newPhone = event.target.value;
+
+                    if (!isValidPhone(newPhone)) {
+                      setPhoneError("Phone number must be 10 digits long");
+                    } else {
+                      setPhoneError(null);
+                    }
+                    if (
+                      newPhone.length === 10 &&
+                      newPhone.substring(0, 2) !== "+1"
+                    ) {
+                      newPhone = "+1" + newPhone;
+                    }
+                    setPhone(newPhone);
+                  }}
+                  error={!!phoneError}
+                  helperText={phoneError}
+                  fullWidth
+                  required
+                  autoFocus
                   sx={{ mb: 2 }}
                 />
                 <TextField

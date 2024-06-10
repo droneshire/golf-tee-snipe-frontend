@@ -21,6 +21,7 @@ export type AccountSpec = ClientConfig["accounts"][string] & {
 export const DEFAULT_ACCOUNT_SPEC: AccountSpec = {
   accountId: "",
   email: "",
+  phone: "",
   password: "",
   scheduleIds: [],
   numPlayers: 4,
@@ -50,6 +51,7 @@ export const Account: FC<AccountProps> = ({
   accountId,
   email,
   password,
+  phone,
   scheduleIds,
   numPlayers,
   timeOfDay,
@@ -76,7 +78,7 @@ export const Account: FC<AccountProps> = ({
   return (
     <TableRow hover>
       <TableCell>
-        <Tooltip title={`Account ${accountId}`}>
+        <Tooltip title={`Account: ${phone}`}>
           {(selectedAccounts.includes(accountId) && (
             <Chip
               icon={<GolfCourseIcon />}

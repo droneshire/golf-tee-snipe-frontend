@@ -54,6 +54,7 @@ export interface Preferences {
 
 export interface AccountType {
   email: string;
+  phone: string;
   password: string;
   scheduleIds: string[];
   numPlayers: number;
