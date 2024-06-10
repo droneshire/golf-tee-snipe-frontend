@@ -73,7 +73,7 @@ export function FirestoreBackedSwitch<DocType extends object>({
   return (
     <>
       <C
-        checked={docSnap.get(fieldPath)}
+        checked={docSnap.get(fieldPath) ?? false}
         disabled={disabled || updating}
         onChange={(_, checked) => update(checked)}
         {...props}

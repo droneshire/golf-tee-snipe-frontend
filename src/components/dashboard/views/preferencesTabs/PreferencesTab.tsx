@@ -28,7 +28,7 @@ const NotificationsTab: FC<{
               disabled={updatingAnything}
               docSnap={userConfigSnapshot!}
               fieldPath="preferences.notifications.sms.updatesEnabled"
-              checkBox
+              checkBox={true}
             />
           }
           label="SMS updates enabled"

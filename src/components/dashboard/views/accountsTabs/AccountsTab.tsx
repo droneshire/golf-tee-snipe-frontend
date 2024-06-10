@@ -17,6 +17,8 @@ import { DEFAULT_ACCOUNT_SPEC, AccountSpec } from "./Account";
 import { AccountListGroup } from "./AccountListGroup";
 import NewAccountDialog from "./NewAccountsDialog";
 
+const MAX_ACCOUNTS = 3;
+
 const AccountsTab: FC<{
   userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
@@ -45,7 +47,7 @@ const AccountsTab: FC<{
   const deleteAccount = (accountId: string) => {
     updateDoc(
       userConfigSnapshot.ref,
-      new FieldPath("watchers", "accounts", accountId),
+      new FieldPath("accounts", accountId),
       deleteField()
     );
   };
@@ -93,10 +95,14 @@ const AccountsTab: FC<{
           }}
         >
           <SportsGolfIcon />
-          <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
+          <Typography sx={{ mt: 4 }} variant="h6" component="div">
             Accounts
           </Typography>
         </Box>
+        <Typography sx={{ mt: 4, mb: 2 }} variant="body1" component="div">
+          You can add <b>{MAX_ACCOUNTS - existingAccountIds.length}</b> more
+          accounts.
+        </Typography>
         <AccountListGroup items={accountItems} actionButtons={actionButtons} />
       </Box>
       <NewAccountDialog
@@ -115,9 +121,15 @@ const AccountsTab: FC<{
       />
       <Box textAlign="right" sx={{ marginTop: 2 }}>
         <Tooltip title="Add Account">
-          <Fab color="primary" onClick={() => setDialogOpen(true)}>
-            <AddIcon />
-          </Fab>
+          <span>
+            <Fab
+              color="primary"
+              onClick={() => setDialogOpen(true)}
+              disabled={existingAccountIds.length >= MAX_ACCOUNTS}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
         </Tooltip>
       </Box>
     </>

@@ -75,14 +75,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
     clearError,
   } = useAsyncAction(props.createAccount);
 
+  const isEditing = props.inputAccount && props.inputAccount?.email;
+
   const validateDesiredTime = () => {
-    console.log(
-      desiredTime,
-      earliestTime,
-      latestTime,
-      desiredTime < earliestTime,
-      desiredTime > latestTime
-    );
     if (desiredTime < earliestTime || desiredTime > latestTime) {
       setDesiredTimeError(true);
       setSnackError("Desired time must be between earliest and latest time");
@@ -140,8 +135,8 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
   };
 
   const handleClose = () => {
-    reset();
     props.onClose();
+    reset();
   };
 
   const reset = React.useCallback(() => {
@@ -211,7 +206,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         numPlayers < 1 ||
         numPlayers > 4
       ) {
-        setSnackError("Invalid time range");
+        setSnackError("Invalid entries");
         return;
       }
 
@@ -232,8 +227,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
       });
 
       if (success) {
-        reset();
-        props.onClose();
+        handleClose();
       }
     } catch (err) {
       setSnackError("Failed to create account.");
@@ -430,7 +424,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
                         control={
                           <Checkbox
                             checked={courses.includes(course)}
-                            onClick={() => handleCourseSelect(course)}
+                            onChange={() => handleCourseSelect(course)}
                           />
                         }
                         label={course}
@@ -469,10 +463,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = (props) => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button type="submit" disabled={disabled} autoFocus>
-            {props.inputAccount && props.inputAccount?.email
-              ? "Update"
-              : "Create"}{" "}
-            Account
+            {isEditing ? "Update" : "Create"} Account
           </Button>
         </DialogActions>
       </Dialog>

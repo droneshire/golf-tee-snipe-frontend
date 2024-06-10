@@ -77,7 +77,7 @@ export const DEFAULT_USER_CONFIG: ClientConfig = {
   preferences: {
     notifications: {
       email: { email: "", updatesEnabled: true },
-      sms: { updatesEnabled: false },
+      sms: { updatesEnabled: true },
     },
   },
   accounts: {},
