@@ -66,6 +66,7 @@ export interface AccountType {
   targetDays: string[];
   allowMultipleReservations: boolean;
   allowNextDayBooking: boolean;
+  isResident: boolean;
 }
 export interface ClientConfig {
   preferences: Preferences;

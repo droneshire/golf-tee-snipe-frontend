@@ -33,6 +33,7 @@ export const DEFAULT_ACCOUNT_SPEC: AccountSpec = {
   targetDays: [],
   allowMultipleReservations: false,
   allowNextDayBooking: false,
+  isResident: false,
 };
 
 export interface AccountActionOption {
@@ -65,6 +66,7 @@ export const Account: FC<AccountProps> = ({
   actionButtons,
   selectedAccounts,
   toggleAccountselection,
+  isResident,
 }) => {
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -103,6 +105,7 @@ export const Account: FC<AccountProps> = ({
       <TableCell>{targetDays.join(", ")}</TableCell>
       <TableCell>{allowMultipleReservations ? "Yes" : "No"}</TableCell>
       <TableCell>{allowNextDayBooking ? "Yes" : "No"}</TableCell>
+      <TableCell>{isResident ? "Yes" : "No"}</TableCell>
       <TableCell sx={{ textAlign: "right" }}>
         <Button onClick={handleActionMenuClick}>Actions</Button>
         <Menu

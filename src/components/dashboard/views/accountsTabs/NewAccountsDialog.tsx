@@ -73,7 +73,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
 
   const [showPassword, setShowPassword] = useState(false);
   const [disabled, setDisabled] = useState<boolean>(true);
-
+  const [isResident, setIsResident] = useState<boolean>(false);
   const {
     runAction: doCreateAccount,
     error,
@@ -156,6 +156,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     setAllowMultipleReservations(false);
     setAllowNextDayBooking(false);
     setCourses([]);
+    setIsResident(false);
   }, []);
 
   useEffect(() => {
@@ -175,6 +176,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
       );
       setAllowNextDayBooking(inputAccount.allowNextDayBooking || false);
       setCourses(inputAccount.scheduleIds || []);
+      setIsResident(inputAccount.isResident || false);
     }
   }, [inputAccount]);
 
@@ -232,6 +234,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         targetDays,
         allowMultipleReservations,
         allowNextDayBooking,
+        isResident,
       });
 
       if (success) {
@@ -486,6 +489,17 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
                   label="Allow Next Day Booking"
                   checked={allowNextDayBooking}
                   onChange={() => setAllowNextDayBooking(!allowNextDayBooking)}
+                  sx={{ mb: 2 }}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Is Resident"
+                  checked={isResident}
+                  onChange={() => setIsResident(!isResident)}
                   sx={{ mb: 2 }}
                 />
               </FormControl>

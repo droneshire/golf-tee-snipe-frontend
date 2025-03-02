@@ -92,6 +92,7 @@ export const AccountListGroup: FC<{
               <TableCell>Target Days </TableCell>
               <TableCell>Multiple Bookings?</TableCell>
               <TableCell>Next Day Booking?</TableCell>
+              <TableCell>Is Resident?</TableCell>
               <TableCell sx={{ textAlign: "right" }}>
                 <Button onClick={handleActionMenuClick}>Actions</Button>
                 <Menu
