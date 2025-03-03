@@ -10,6 +10,7 @@ import {
 import { ClientConfig } from "types/user";
 import {
   FirestoreBackedSwitch,
+  FirestoreBackedTextField,
   FirestoreBackedTimeZoneSelect,
 } from "components/utils/forms";
 const NotificationsTab: FC<{
@@ -32,6 +33,29 @@ const NotificationsTab: FC<{
             />
           }
           label="SMS updates enabled"
+        />
+        <Typography variant="button" gutterBottom sx={{ marginTop: 2 }}>
+          TextBelt
+        </Typography>
+        <Typography variant="body1">
+          Click{" "}
+          <a href="https://textbelt.com/purchase/" target="_blank">
+            here
+          </a>{" "}
+          to reload TextBelt.
+        </Typography>
+        <Typography variant="body1" sx={{ marginTop: 2 }}>
+          API Key:
+        </Typography>
+        <FirestoreBackedTextField
+          sx={{ marginTop: 2, marginRight: 2, width: "300px" }}
+          disabled={true}
+          docSnap={userConfigSnapshot!}
+          InputProps={{
+            readOnly: true,
+            title: userConfigSnapshot?.get("preferences.notifications.sms.textbeltApiKey") || ""
+          }}
+          fieldPath="preferences.notifications.sms.textbeltApiKey"
         />
       </FormGroup>
       <Divider sx={{ marginTop: 2, marginBottom: 4 }} />

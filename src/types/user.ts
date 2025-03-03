@@ -48,6 +48,8 @@ export interface Preferences {
     };
     sms: {
       updatesEnabled: boolean;
+      textbeltApiKey: string;
+      phoneNumber: string;
     };
   };
 }
@@ -79,7 +81,7 @@ export const DEFAULT_USER_CONFIG: ClientConfig = {
   preferences: {
     notifications: {
       email: { email: "", updatesEnabled: true },
-      sms: { updatesEnabled: true },
+      sms: { updatesEnabled: true, textbeltApiKey: "", phoneNumber: "" },
     },
   },
   accounts: {},
