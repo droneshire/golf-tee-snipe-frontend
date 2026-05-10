@@ -54,6 +54,16 @@ export interface Preferences {
   };
 }
 
+/** Stored card for hosted-checkout automation; treat as sensitive. */
+export interface CreditCardPayment {
+  cardholder_name: string;
+  number: string;
+  exp_month: string;
+  exp_year: string;
+  cvv: string;
+  billing_postal_code?: string;
+}
+
 export interface AccountType {
   email: string;
   phone: string;
@@ -69,6 +79,7 @@ export interface AccountType {
   allowMultipleReservations: boolean;
   allowNextDayBooking: boolean;
   isResident: boolean;
+  payment?: CreditCardPayment;
 }
 export interface ClientConfig {
   preferences: Preferences;

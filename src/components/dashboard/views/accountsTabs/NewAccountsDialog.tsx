@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   FormControl,
   FormControlLabel,
   Grid,
@@ -17,13 +18,20 @@ import {
   MenuItem,
   Snackbar,
   TextField,
+  Typography,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
-import { AccountType, Courses, DaysOfWeek, Times } from "types/user";
+import {
+  AccountType,
+  Courses,
+  CreditCardPayment,
+  DaysOfWeek,
+  Times,
+} from "types/user";
 import { isValidPhone } from "utils/validators";
 
 interface NewAccountDialogProps {
@@ -72,8 +80,17 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
   const [desiredTimeError, setDesiredTimeError] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showCardNumber, setShowCardNumber] = useState(false);
+  const [showCvv, setShowCvv] = useState(false);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [isResident, setIsResident] = useState<boolean>(false);
+
+  const [cardholderName, setCardholderName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expMonth, setExpMonth] = useState("");
+  const [expYear, setExpYear] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [billingPostalCode, setBillingPostalCode] = useState("");
   const {
     runAction: doCreateAccount,
     error,
@@ -96,6 +113,22 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     <InputAdornment position="end">
       <IconButton onClick={() => setShowPassword(!showPassword)}>
         {showPassword ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    </InputAdornment>
+  );
+
+  const cardNumberAdornment = (
+    <InputAdornment position="end">
+      <IconButton onClick={() => setShowCardNumber(!showCardNumber)}>
+        {showCardNumber ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    </InputAdornment>
+  );
+
+  const cvvAdornment = (
+    <InputAdornment position="end">
+      <IconButton onClick={() => setShowCvv(!showCvv)}>
+        {showCvv ? <VisibilityOff /> : <Visibility />}
       </IconButton>
     </InputAdornment>
   );
@@ -157,6 +190,14 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     setAllowNextDayBooking(false);
     setCourses([]);
     setIsResident(false);
+    setCardholderName("");
+    setCardNumber("");
+    setExpMonth("");
+    setExpYear("");
+    setCvv("");
+    setBillingPostalCode("");
+    setShowCardNumber(false);
+    setShowCvv(false);
   }, []);
 
   useEffect(() => {
@@ -177,6 +218,22 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
       setAllowNextDayBooking(inputAccount.allowNextDayBooking || false);
       setCourses(inputAccount.scheduleIds || []);
       setIsResident(inputAccount.isResident || false);
+      const p = inputAccount.payment;
+      if (p) {
+        setCardholderName(p.cardholder_name || "");
+        setCardNumber(p.number || "");
+        setExpMonth(p.exp_month || "");
+        setExpYear(p.exp_year || "");
+        setCvv(p.cvv || "");
+        setBillingPostalCode(p.billing_postal_code || "");
+      } else {
+        setCardholderName("");
+        setCardNumber("");
+        setExpMonth("");
+        setExpYear("");
+        setCvv("");
+        setBillingPostalCode("");
+      }
     }
   }, [inputAccount]);
 
@@ -219,6 +276,37 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         return;
       }
 
+      const cardFields = [
+        cardholderName,
+        cardNumber,
+        expMonth,
+        expYear,
+        cvv,
+      ].map((s) => String(s).trim());
+      const anyCard = cardFields.some(Boolean) || billingPostalCode.trim();
+      const allCard = cardFields.every(Boolean);
+      if (anyCard && !allCard) {
+        setSnackError(
+          "Fill all card fields (name, number, exp month, exp year, CVV) or leave payment empty"
+        );
+        return;
+      }
+
+      let payment: CreditCardPayment | undefined;
+      if (allCard) {
+        payment = {
+          cardholder_name: cardFields[0],
+          number: cardFields[1],
+          exp_month: cardFields[2],
+          exp_year: cardFields[3],
+          cvv: cardFields[4],
+        };
+        const zip = billingPostalCode.trim();
+        if (zip) {
+          payment = { ...payment, billing_postal_code: zip };
+        }
+      }
+
       const success = await doCreateAccount({
         accountId: email,
         email,
@@ -235,6 +323,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         allowMultipleReservations,
         allowNextDayBooking,
         isResident,
+        ...(payment ? { payment } : {}),
       });
 
       if (success) {
@@ -259,6 +348,13 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     allowMultipleReservations,
     allowNextDayBooking,
     courses,
+    isResident,
+    cardholderName,
+    cardNumber,
+    expMonth,
+    expYear,
+    cvv,
+    billingPostalCode,
     reset,
     onClose,
   ]);
@@ -503,6 +599,80 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
                   sx={{ mb: 2 }}
                 />
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Payment card (optional)
+              </Typography>
+              <DialogContentText sx={{ mb: 2 }}>
+                For future hosted checkout. Stored as sensitive data—only fill if
+                you accept saving card details in your configuration.
+              </DialogContentText>
+              <TextField
+                label="Cardholder name"
+                value={cardholderName}
+                onChange={(e) => setCardholderName(e.target.value)}
+                fullWidth
+                autoComplete="cc-name"
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Card number"
+                type={showCardNumber ? "text" : "password"}
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                InputProps={{ endAdornment: cardNumberAdornment }}
+                fullWidth
+                autoComplete="cc-number"
+                sx={{ mb: 2 }}
+              />
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Exp. month"
+                    value={expMonth}
+                    onChange={(e) => setExpMonth(e.target.value)}
+                    fullWidth
+                    placeholder="MM"
+                    inputProps={{ maxLength: 2 }}
+                    autoComplete="cc-exp-month"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Exp. year"
+                    value={expYear}
+                    onChange={(e) => setExpYear(e.target.value)}
+                    fullWidth
+                    placeholder="YYYY"
+                    inputProps={{ maxLength: 4 }}
+                    autoComplete="cc-exp-year"
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={6}>
+                  <TextField
+                    label="CVV"
+                    type={showCvv ? "text" : "password"}
+                    value={cvv}
+                    onChange={(e) => setCvv(e.target.value)}
+                    InputProps={{ endAdornment: cvvAdornment }}
+                    fullWidth
+                    autoComplete="cc-csc"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing postal code (optional)"
+                    value={billingPostalCode}
+                    onChange={(e) => setBillingPostalCode(e.target.value)}
+                    fullWidth
+                    autoComplete="postal-code"
+                  />
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </DialogContent>
