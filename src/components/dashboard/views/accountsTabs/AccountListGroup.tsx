@@ -80,7 +80,6 @@ export const AccountListGroup: FC<{
           overflowX: "auto",
           overflowY: "visible",
           WebkitOverflowScrolling: "touch",
-          touchAction: "pan-x pan-y",
           boxShadow: (theme) =>
             `0 4px 20px ${alpha(theme.palette.common.black, 0.06)}`,
         }}

@@ -66,7 +66,14 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
       <CssBaseline />
       <AppBar
         drawerIsOpen={open}
@@ -83,10 +90,11 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
+          flex: "1 1 0",
           minWidth: 0,
-          height: "100vh",
+          minHeight: 0,
           overflow: "auto",
+          WebkitOverflowScrolling: "touch",
           /* Let global golf backdrop show through */
           background: "transparent",
         }}
