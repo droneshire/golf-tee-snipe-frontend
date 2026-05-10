@@ -1,5 +1,6 @@
 import React, { FC, useState, useCallback, useMemo } from "react";
 import {
+  Box,
   TableContainer,
   Paper,
   Table,
@@ -62,17 +63,35 @@ export const AccountListGroup: FC<{
     return `${selectedItems.length} selected`;
   }, [selectedItems]);
   return (
-    <TableContainer
-      component={Paper}
-      variant="outlined"
+    <Box
       sx={{
-        borderRadius: 3,
-        overflow: "hidden",
-        boxShadow: (theme) =>
-          `0 4px 20px ${alpha(theme.palette.common.black, 0.06)}`,
+        width: "100%",
+        maxWidth: "100%",
+        minWidth: 0,
       }}
     >
-      <Table size="small" sx={{ "& td, & th": { py: 1.5 } }}>
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{
+          borderRadius: 3,
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "auto",
+          overflowY: "visible",
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-x pan-y",
+          boxShadow: (theme) =>
+            `0 4px 20px ${alpha(theme.palette.common.black, 0.06)}`,
+        }}
+      >
+        <Table
+          size="small"
+          sx={{
+            minWidth: 1040,
+            "& td, & th": { py: 1.5 },
+          }}
+        >
         <TableBody>
           {items.length > 0 && (
             <TableRow
@@ -172,10 +191,11 @@ export const AccountListGroup: FC<{
             />
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
       <TableDisplayButtons
         {...{ items, visibleItems, setVisibleItems, incrementalVisibleItems }}
       />
-    </TableContainer>
+    </Box>
   );
 };

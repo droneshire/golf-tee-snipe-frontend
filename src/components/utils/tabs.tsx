@@ -17,8 +17,8 @@ export const TabPanel = withErrorBoundary<TabPanelProps>(
         <Paper
           variant="outlined"
           sx={{
-            p: { xs: 2, sm: 3 },
-            m: 2,
+            p: { xs: 1.5, sm: 3 },
+            m: { xs: 0.5, sm: 2 },
             display: "flex",
             flexDirection: "column",
             borderRadius: 3,
@@ -26,6 +26,10 @@ export const TabPanel = withErrorBoundary<TabPanelProps>(
             borderColor: (theme) => theme.palette.divider,
             boxShadow: (theme) =>
               `0 4px 24px ${theme.palette.mode === "light" ? "rgba(15, 23, 42, 0.06)" : "rgba(0,0,0,0.2)"}`,
+            minWidth: 0,
+            width: "100%",
+            maxWidth: "100%",
+            boxSizing: "border-box",
           }}
         >
           {children}

@@ -22,7 +22,7 @@ const AccountsView: FC = () => {
     return <CircularProgress />;
   }
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", minWidth: 0, maxWidth: "100%" }}>
       <>
         <Paper
           variant="outlined"
@@ -30,6 +30,8 @@ const AccountsView: FC = () => {
             borderRadius: 3,
             overflow: "hidden",
             mb: 0,
+            minWidth: 0,
+            maxWidth: "100%",
             border: "1px solid",
             borderColor: "divider",
             boxShadow: "0 2px 12px rgba(15, 23, 42, 0.05)",
@@ -38,7 +40,9 @@ const AccountsView: FC = () => {
           <Tabs
             value={selectedTabIndex}
             onChange={selectTab}
-            centered
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
             sx={{ px: 1, pt: 0.5 }}
           >
             {accountsTabsList.map(({ key, label }) => {

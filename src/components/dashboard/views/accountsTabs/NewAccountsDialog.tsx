@@ -20,7 +20,9 @@ import {
   TextField,
   Typography,
   alpha,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback } from "react";
@@ -97,6 +99,9 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
     error,
     clearError,
   } = useAsyncAction(createAccount);
+
+  const theme = useTheme();
+  const fullScreenDialog = useMediaQuery(theme.breakpoints.down("sm"));
 
   const isEditing = inputAccount && inputAccount.email;
 
@@ -366,6 +371,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         open={open}
         onClose={onClose}
         fullWidth
+        fullScreen={fullScreenDialog}
         maxWidth="sm"
         scroll="paper"
         PaperProps={{

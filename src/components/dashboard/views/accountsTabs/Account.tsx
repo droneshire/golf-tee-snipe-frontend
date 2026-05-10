@@ -90,6 +90,11 @@ export const Account: FC<AccountProps> = ({
               sx={{
                 fontWeight: 600,
                 borderRadius: 2,
+                maxWidth: { xs: 200, sm: 320 },
+                "& .MuiChip-label": {
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
                 boxShadow: (theme) =>
                   `0 2px 8px ${theme.palette.mode === "light" ? "rgba(13, 148, 136, 0.25)" : "rgba(0,0,0,0.2)"}`,
               }}
@@ -100,7 +105,16 @@ export const Account: FC<AccountProps> = ({
               label={accountId}
               variant="outlined"
               onClick={() => toggleAccountselection(accountId)}
-              sx={{ fontWeight: 600, borderRadius: 2, borderWidth: 2 }}
+              sx={{
+                fontWeight: 600,
+                borderRadius: 2,
+                borderWidth: 2,
+                maxWidth: { xs: 200, sm: 320 },
+                "& .MuiChip-label": {
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
+              }}
             />
           )}
         </Tooltip>

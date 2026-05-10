@@ -92,7 +92,7 @@ const AccountsTab: FC<{
 
   return (
     <>
-      <Box alignItems="center">
+      <Box alignItems="center" sx={{ width: "100%", minWidth: 0 }}>
         <Paper
           elevation={0}
           variant="outlined"

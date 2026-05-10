@@ -84,6 +84,7 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
         component="main"
         sx={{
           flexGrow: 1,
+          minWidth: 0,
           height: "100vh",
           overflow: "auto",
           /* Let global golf backdrop show through */
@@ -91,7 +92,15 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 3, mb: 4 }}>
+        <Container
+          maxWidth="lg"
+          sx={{
+            mt: 3,
+            mb: 4,
+            minWidth: 0,
+            px: { xs: 1.5, sm: 3 },
+          }}
+        >
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <Outlet
               context={
