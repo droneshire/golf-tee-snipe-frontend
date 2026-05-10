@@ -162,7 +162,10 @@ const AccountsTab: FC<{
           <span>
             <Fab
               color="primary"
-              onClick={() => setDialogOpen(true)}
+              onClick={() => {
+                setInitialAccountspec(DEFAULT_ACCOUNT_SPEC);
+                setDialogOpen(true);
+              }}
               disabled={existingAccountIds.length >= MAX_ACCOUNTS}
             >
               <AddIcon />

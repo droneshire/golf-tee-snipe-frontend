@@ -28,13 +28,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback } from "react";
 import { useAsyncAction } from "hooks/async";
 import { AccountSpec } from "./Account";
-import {
-  AccountType,
-  Courses,
-  CreditCardPayment,
-  DaysOfWeek,
-  Times,
-} from "types/user";
+import { Courses, CreditCardPayment, DaysOfWeek, Times } from "types/user";
 import { isValidPhone } from "utils/validators";
 
 interface NewAccountDialogProps {
@@ -42,7 +36,8 @@ interface NewAccountDialogProps {
   onClose: () => void;
   createAccount: (account: AccountSpec) => Promise<void> | void;
   existingAccountIds: string[];
-  inputAccount?: AccountType;
+  /** When editing, includes `accountId` (Firestore map key); may differ from nested `email`. */
+  inputAccount?: AccountSpec;
 }
 
 const DefaultStartTime = "06:00";
@@ -103,7 +98,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
   const theme = useTheme();
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const isEditing = inputAccount && inputAccount.email;
+  const isEditing = Boolean(inputAccount?.accountId);
 
   const validateDesiredTime = () => {
     if (desiredTime < earliestTime || desiredTime > latestTime) {
@@ -208,7 +203,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
 
   useEffect(() => {
     if (inputAccount) {
-      setEmail(inputAccount.email || "");
+      setEmail(inputAccount.email || inputAccount.accountId || "");
       setPhone(inputAccount.phone || "");
       setPassword(inputAccount.password || "");
       setNumPlayers(Number(inputAccount.numPlayers) || 4);
@@ -313,8 +308,12 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
         }
       }
 
+      const accountKey = inputAccount?.accountId
+        ? inputAccount.accountId
+        : email.trim();
+
       const success = await doCreateAccount({
-        accountId: email,
+        accountId: accountKey,
         email,
         phone,
         password,
@@ -341,6 +340,7 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
   }, [
     disabled,
     doCreateAccount,
+    inputAccount?.accountId,
     email,
     password,
     phone,
