@@ -85,7 +85,14 @@ export const Account: FC<AccountProps> = ({
             <Chip
               icon={<GolfCourseIcon />}
               label={accountId}
+              color="primary"
               onClick={() => toggleAccountselection(accountId)}
+              sx={{
+                fontWeight: 600,
+                borderRadius: 2,
+                boxShadow: (theme) =>
+                  `0 2px 8px ${theme.palette.mode === "light" ? "rgba(13, 148, 136, 0.25)" : "rgba(0,0,0,0.2)"}`,
+              }}
             />
           )) || (
             <Chip
@@ -93,6 +100,7 @@ export const Account: FC<AccountProps> = ({
               label={accountId}
               variant="outlined"
               onClick={() => toggleAccountselection(accountId)}
+              sx={{ fontWeight: 600, borderRadius: 2, borderWidth: 2 }}
             />
           )}
         </Tooltip>
@@ -107,7 +115,13 @@ export const Account: FC<AccountProps> = ({
       <TableCell>{allowNextDayBooking ? "Yes" : "No"}</TableCell>
       <TableCell>{isResident ? "Yes" : "No"}</TableCell>
       <TableCell sx={{ textAlign: "right" }}>
-        <Button onClick={handleActionMenuClick}>Actions</Button>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleActionMenuClick}
+        >
+          Actions
+        </Button>
         <Menu
           anchorEl={actionMenuAnchorEl}
           open={actionMenuOpen}

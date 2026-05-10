@@ -84,18 +84,34 @@ const AppBar: FC<AppBarProps> = ({
         >
           <MenuIcon />
         </IconButton>
-        <GolfCourse />
+        <GolfCourse sx={{ mr: 1.25, opacity: 0.95, fontSize: 28 }} />
         <Typography
           component="h1"
           variant="h6"
           color="inherit"
           noWrap
-          sx={{ flexGrow: 1 }}
+          sx={{
+            flexGrow: 1,
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            textShadow: "0 1px 2px rgba(0,0,0,0.12)",
+          }}
         >
           Golf Tee Time Sniper
         </Typography>
-        <IconButton onClick={toggleUserMenu}>
-          <Avatar alt="User Account" src={user.photoURL || ""}>
+        <IconButton
+          onClick={toggleUserMenu}
+          sx={{
+            p: 0.5,
+            border: "2px solid rgba(255,255,255,0.35)",
+            "&:hover": { borderColor: "rgba(255,255,255,0.6)" },
+          }}
+        >
+          <Avatar
+            alt="User Account"
+            src={user.photoURL || ""}
+            sx={{ width: 36, height: 36, fontSize: "0.9rem" }}
+          >
             {
               // Show initials if we can't load the photo
               user.displayName?.split(" ").map((name) => name[0])
@@ -106,6 +122,16 @@ const AppBar: FC<AppBarProps> = ({
             anchorEl={userMenuAnchorEl}
             open={userMenuIsOpen}
             onClose={closeUserMenu}
+            PaperProps={{
+              elevation: 8,
+              sx: {
+                mt: 1.5,
+                minWidth: 220,
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+              },
+            }}
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}

@@ -45,11 +45,26 @@ const EmailLoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Login or Create Account</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Please enter your email and password to login or create a new account.
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="xs"
+      PaperProps={{ sx: { overflow: "hidden" } }}
+    >
+      <DialogTitle
+        sx={{
+          pb: 1,
+          background: (theme) =>
+            `linear-gradient(125deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+          color: "primary.contrastText",
+        }}
+      >
+        Email sign in
+      </DialogTitle>
+      <DialogContent sx={{ pt: 3 }}>
+        <DialogContentText sx={{ mb: 2 }}>
+          Sign in with an existing account or register a new one.
         </DialogContentText>
         <TextField
           autoFocus
@@ -59,6 +74,7 @@ const EmailLoginModal: React.FC<LoginModalProps> = ({
           fullWidth
           value={email}
           onChange={handleEmailChange}
+          sx={{ mb: 1.5 }}
         />
         <TextField
           margin="dense"
@@ -67,12 +83,20 @@ const EmailLoginModal: React.FC<LoginModalProps> = ({
           fullWidth
           value={password}
           onChange={handlePasswordChange}
+          sx={{ mb: 1 }}
         />
-        <Link to="/forgot-password">Forgot Password?</Link>
+        <Link to="/forgot-password">Forgot password?</Link>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleLogin}>Login</Button>
-        <Button onClick={handleRegister}>Register</Button>
+      <DialogActions sx={{ px: 3, pb: 2.5, pt: 0, gap: 1 }}>
+        <Button onClick={onClose} color="inherit">
+          Cancel
+        </Button>
+        <Button onClick={handleLogin} variant="contained" color="primary">
+          Login
+        </Button>
+        <Button onClick={handleRegister} variant="outlined" color="primary">
+          Register
+        </Button>
       </DialogActions>
     </Dialog>
   );

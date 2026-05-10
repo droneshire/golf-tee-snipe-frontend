@@ -1,6 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
 
-import { Tooltip, CircularProgress, Typography, Fab } from "@mui/material";
+import {
+  Tooltip,
+  CircularProgress,
+  Typography,
+  Fab,
+  Paper,
+  alpha,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -86,23 +93,54 @@ const AccountsTab: FC<{
   return (
     <>
       <Box alignItems="center">
-        <Box
+        <Paper
+          elevation={0}
+          variant="outlined"
           sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "baseline",
-            gap: 2,
+            mt: 1,
+            mb: 3,
+            p: { xs: 2, sm: 3 },
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            background: (theme) =>
+              `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(
+                theme.palette.background.paper,
+                0.95
+              )} 55%, ${theme.palette.background.paper} 100%)`,
+            boxShadow: "0 4px 20px rgba(15, 23, 42, 0.06)",
           }}
         >
-          <SportsGolfIcon />
-          <Typography sx={{ mt: 4 }} variant="h6" component="div">
-            Accounts
-          </Typography>
-        </Box>
-        <Typography sx={{ mt: 4, mb: 2 }} variant="body1" component="div">
-          You can add <b>{MAX_ACCOUNTS - existingAccountIds.length}</b> more
-          accounts.
-        </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 2,
+              flexWrap: "wrap",
+            }}
+          >
+            <SportsGolfIcon
+              sx={{
+                fontSize: 36,
+                color: "primary.main",
+                filter: "drop-shadow(0 2px 4px rgba(13,148,136,0.35))",
+              }}
+            />
+            <Box>
+              <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
+                Accounts
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+                You can add{" "}
+                <Typography component="span" color="primary.main" fontWeight={700}>
+                  {MAX_ACCOUNTS - existingAccountIds.length}
+                </Typography>{" "}
+                more accounts.
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
         <AccountListGroup items={accountItems} actionButtons={actionButtons} />
       </Box>
       <NewAccountDialog

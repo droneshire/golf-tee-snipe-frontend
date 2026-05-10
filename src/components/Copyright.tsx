@@ -7,6 +7,7 @@ const Copyright: FC<any> = (props: any) => {
       variant="body2"
       color="text.secondary"
       align="center"
+      sx={{ opacity: 0.85, letterSpacing: "0.01em" }}
       {...props}
     >
       {"Copyright © Engineered Cash Flow LLC "}

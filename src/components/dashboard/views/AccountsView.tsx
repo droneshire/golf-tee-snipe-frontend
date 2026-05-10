@@ -1,19 +1,13 @@
 import React, { FC } from "react";
 import { useOutletContext } from "react-router-dom";
-import { CircularProgress, Box, Tab, Tabs } from "@mui/material";
+import { CircularProgress, Box, Paper, Tab, Tabs } from "@mui/material";
 
 import { TabPanel } from "components/utils/tabs";
 import { DashboardViewContext } from "components/dashboard/DashboardPage";
 import accountsTabsList from "./accountsTabs/accountsTabsList";
 
 const AccountsView: FC = () => {
-  const {
-    user,
-    userConfigSnapshot,
-    userConfigRef,
-    clientsSnapshot,
-    clientsConfigRef,
-  } = useOutletContext<DashboardViewContext>();
+  const { userConfigSnapshot } = useOutletContext<DashboardViewContext>();
 
   const accounts = userConfigSnapshot?.get("accounts");
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(
@@ -30,13 +24,28 @@ const AccountsView: FC = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={selectedTabIndex} onChange={selectTab} centered>
+        <Paper
+          variant="outlined"
+          sx={{
+            borderRadius: 3,
+            overflow: "hidden",
+            mb: 0,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 2px 12px rgba(15, 23, 42, 0.05)",
+          }}
+        >
+          <Tabs
+            value={selectedTabIndex}
+            onChange={selectTab}
+            centered
+            sx={{ px: 1, pt: 0.5 }}
+          >
             {accountsTabsList.map(({ key, label }) => {
               return <Tab label={label} value={key} key={key} />;
             })}
           </Tabs>
-        </Box>
+        </Paper>
         {accountsTabsList.map(({ key, component: C }) => {
           return (
             <TabPanel selectedTabIndex={selectedTabIndex} index={key} key={key}>

@@ -1,28 +1,23 @@
-import React, { FC } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import React from "react";
+import { useLocation, Navigate, Link as RouterLink } from "react-router-dom";
 import {
   Avatar,
   Box,
-  Chip,
-  ChipProps,
+  Button,
   Container,
   CssBaseline,
+  Link,
+  Paper,
   TextField,
   Typography,
+  alpha,
 } from "@mui/material";
 import Copyright from "components/Copyright";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { sendPasswordReset } from "hooks/firebase/auth";
-
-interface LoginButtonProps extends ChipProps {
-  clickHandler: () => void;
-}
-const ResetPasswordButton: FC<LoginButtonProps> = ({
-  clickHandler,
-  ...props
-}) => <Chip onClick={clickHandler} {...props} />;
 
 const ForgotPassword: React.FC = () => {
   const [resetEmail, setResetEmail] = React.useState("");
@@ -41,25 +36,67 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        px: 2,
+        py: 4,
+        background: "transparent",
+      }}
+    >
       <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Unlock Account
-        </Typography>
-        <Box sx={{ mt: 3 }}>
+      <Container component="main" maxWidth="sm">
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 3, sm: 4 },
+            borderRadius: 4,
+            border: "1px solid",
+            borderColor: (theme) => alpha(theme.palette.common.black, 0.06),
+            boxShadow: (theme) =>
+              `0 20px 48px ${alpha(theme.palette.primary.dark, 0.1)}`,
+          }}
+        >
+          <Link
+            component={RouterLink}
+            to="/login"
+            underline="hover"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              mb: 2,
+              fontSize: "0.875rem",
+            }}
+          >
+            <ArrowBackIcon sx={{ fontSize: 18 }} />
+            Back to sign in
+          </Link>
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <Avatar
+              sx={{
+                m: "0 auto",
+                mb: 2,
+                width: 56,
+                height: 56,
+                bgcolor: "secondary.main",
+              }}
+            >
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5" sx={{ fontWeight: 700 }}>
+              Reset password
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Enter your email and we will send reset instructions.
+            </Typography>
+          </Box>
           <TextField
-            sx={{ marginBottom: 2 }}
+            sx={{ mb: 2 }}
             autoFocus
             margin="dense"
             label="Email"
@@ -68,21 +105,28 @@ const ForgotPassword: React.FC = () => {
             value={resetEmail}
             onChange={handleEmailChange}
           />
-        </Box>
-        <Box sx={{ alignSelf: "center" }}>
-          <ResetPasswordButton
-            clickHandler={handleResetPassword}
-            icon={<LockOpenIcon />}
-            label="Reset Password"
-            sx={{ marginBottom: 2, alignSelf: "center" }}
-          />
-        </Box>
-      </Box>
-      <Copyright sx={{ mt: 5 }} />
+          <Button
+            fullWidth
+            size="large"
+            variant="contained"
+            color="primary"
+            startIcon={<LockOpenIcon />}
+            onClick={handleResetPassword}
+            sx={{ py: 1.25 }}
+          >
+            Send reset link
+          </Button>
+        </Paper>
+      </Container>
+      <Copyright sx={{ mt: 4 }} />
       {didResetPassword && (
-        <Navigate to={(location.state as any)?.from?.pathname || "/"} replace />
+        <Navigate
+          to={(location.state as { from?: { pathname?: string } })?.from
+            ?.pathname || "/"}
+          replace
+        />
       )}
-    </Container>
+    </Box>
   );
 };
 

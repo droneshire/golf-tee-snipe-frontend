@@ -19,6 +19,7 @@ import {
   Snackbar,
   TextField,
   Typography,
+  alpha,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -364,21 +365,37 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
       <Dialog
         open={open}
         onClose={onClose}
+        fullWidth
+        maxWidth="sm"
+        scroll="paper"
         PaperProps={{
           component: "form",
           onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             doSubmit();
           },
+          sx: {
+            maxHeight: "min(92vh, 920px)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+          },
         }}
       >
-        <DialogTitle>{isEditing ? "Edit" : "Add"} Account</DialogTitle>
-        <Box sx={{ paddingX: 3 }}>
-          <DialogContentText>
-            Please fill out the info for the new account.
+        <DialogTitle
+          sx={{
+            py: 2.5,
+            background: (theme) =>
+              `linear-gradient(125deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+            color: "primary.contrastText",
+          }}
+        >
+          {isEditing ? "Edit account" : "Add account"}
+        </DialogTitle>
+        <DialogContent sx={{ flex: "1 1 auto", overflowY: "auto", pt: 3 }}>
+          <DialogContentText sx={{ mb: 2 }}>
+            Course credentials and booking preferences for this sniper account.
           </DialogContentText>
-        </Box>
-        <DialogContent>
           <Grid container spacing={2}>
             {/* Text fields stacked vertically */}
             <Grid item xs={12}>
@@ -509,11 +526,13 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Button
+                  variant="outlined"
+                  fullWidth
                   onClick={handleDayMenuOpen}
                   endIcon={<KeyboardArrowDownIcon />}
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 2, py: 1.25, justifyContent: "space-between" }}
                 >
-                  Target Days
+                  Target days
                 </Button>
                 <Menu
                   anchorEl={dayMenuAnchorEl}
@@ -539,9 +558,11 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Button
+                  variant="outlined"
+                  fullWidth
                   onClick={handleCourseMenuOpen}
                   endIcon={<KeyboardArrowDownIcon />}
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 2, py: 1.25, justifyContent: "space-between" }}
                 >
                   Courses
                 </Button>
@@ -601,8 +622,17 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              <Divider sx={{ my: 2 }} />
+              <Box
+                sx={(theme) => ({
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: alpha(theme.palette.primary.main, 0.06),
+                  border: "1px solid",
+                  borderColor: alpha(theme.palette.primary.main, 0.15),
+                })}
+              >
+              <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
                 Payment card (optional)
               </Typography>
               <DialogContentText sx={{ mb: 2 }}>
@@ -673,14 +703,32 @@ const NewAccountDialog: React.FC<NewAccountDialogProps> = ({
                   />
                 </Grid>
               </Grid>
+              </Box>
             </Grid>
           </Grid>
         </DialogContent>
 
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" disabled={disabled} autoFocus>
-            {isEditing ? "Update" : "Create"} Account
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 2,
+            gap: 1.5,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            bgcolor: "action.hover",
+          }}
+        >
+          <Button onClick={handleClose} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={disabled}
+            sx={{ minWidth: 140 }}
+          >
+            {isEditing ? "Save changes" : "Create account"}
           </Button>
         </DialogActions>
       </Dialog>

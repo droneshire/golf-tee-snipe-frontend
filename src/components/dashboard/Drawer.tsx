@@ -12,6 +12,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
@@ -55,43 +56,80 @@ export interface DrawerProps extends StyledDrawerProps {
 
 interface ViewButtonProps extends Pick<DashbardViewSpec, "label" | "icon"> {
   to: string;
+  drawerOpen: boolean;
 }
-const ViewButton: FC<ViewButtonProps> = ({ to, label, icon: Icon }) => {
+const ViewButton: FC<ViewButtonProps> = ({
+  to,
+  label,
+  icon: Icon,
+  drawerOpen,
+}) => {
   const resolved = useResolvedPath(to);
   const match = useMatch({ path: resolved.pathname, end: true });
-  return (
-    <ListItemButton selected={!!match} href={to}>
-      <ListItemIcon>
+  const button = (
+    <ListItemButton
+      selected={!!match}
+      href={to}
+      sx={{
+        justifyContent: drawerOpen ? "flex-start" : "center",
+        px: drawerOpen ? undefined : 1,
+        mx: drawerOpen ? undefined : 0.5,
+        minHeight: 48,
+      }}
+    >
+      <ListItemIcon
+        sx={{
+          minWidth: 0,
+          mr: drawerOpen ? undefined : 0,
+          justifyContent: "center",
+        }}
+      >
         <Icon />
       </ListItemIcon>
-      <ListItemText primary={label} />
+      {drawerOpen ? <ListItemText primary={label} /> : null}
     </ListItemButton>
+  );
+
+  return drawerOpen ? (
+    button
+  ) : (
+    <Tooltip title={label} placement="right" arrow enterDelay={400}>
+      {button}
+    </Tooltip>
   );
 };
 
-const Drawer: FC<DrawerProps> = ({ setOpen, viewsList, ...props }) => {
+const Drawer: FC<DrawerProps> = ({ setOpen, viewsList, open, ...props }) => {
   return (
-    <StyledDrawer variant="permanent" {...props}>
+    <StyledDrawer variant="permanent" open={open} {...props}>
       <Toolbar
         sx={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "flex-end",
-          px: [1],
+          justifyContent: open ? "flex-end" : "center",
+          px: open ? 1 : 0.5,
         }}
       >
-        <IconButton onClick={() => setOpen(false)}>
+        <IconButton
+          onClick={() => setOpen(false)}
+          size={open ? "medium" : "small"}
+          sx={{
+            color: "text.secondary",
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
           <ChevronLeftIcon />
         </IconButton>
       </Toolbar>
       <Divider />
-      <List component="nav">
+      <List component="nav" sx={{ px: open ? 0.5 : 0, py: 1 }}>
         {viewsList.map(({ key, label, icon }) => (
           <ViewButton
             key={key}
             to={`/dashboard/${key}`}
             label={label}
             icon={icon}
+            drawerOpen={open}
           />
         ))}
       </List>

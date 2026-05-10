@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
+import { Box, CircularProgress, Paper, Tab, Tabs } from "@mui/material";
 
 import { DashboardViewContext } from "components/dashboard/DashboardPage";
 import preferencesTabsList from "./preferencesTabs/preferencesTabsList";
@@ -25,13 +25,28 @@ const PreferencesView: FC = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={selectedTabIndex} onChange={selectTab} centered>
+        <Paper
+          variant="outlined"
+          sx={{
+            borderRadius: 3,
+            overflow: "hidden",
+            mb: 0,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 2px 12px rgba(15, 23, 42, 0.05)",
+          }}
+        >
+          <Tabs
+            value={selectedTabIndex}
+            onChange={selectTab}
+            centered
+            sx={{ px: 1, pt: 0.5 }}
+          >
             {preferencesTabsList.map(({ key, label }) => {
               return <Tab label={label} value={key} key={key} />;
             })}
           </Tabs>
-        </Box>
+        </Paper>
         {preferencesTabsList.map(({ key, component: C }) => {
           return (
             <TabPanel selectedTabIndex={selectedTabIndex} index={key} key={key}>

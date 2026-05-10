@@ -17,10 +17,15 @@ export const TabPanel = withErrorBoundary<TabPanelProps>(
         <Paper
           variant="outlined"
           sx={{
-            p: 2,
+            p: { xs: 2, sm: 3 },
             m: 2,
             display: "flex",
             flexDirection: "column",
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: (theme) => theme.palette.divider,
+            boxShadow: (theme) =>
+              `0 4px 24px ${theme.palette.mode === "light" ? "rgba(15, 23, 42, 0.06)" : "rgba(0,0,0,0.2)"}`,
           }}
         >
           {children}

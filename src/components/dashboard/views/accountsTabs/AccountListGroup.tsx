@@ -13,6 +13,7 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  alpha,
 } from "@mui/material";
 import { AccountSpec, Account } from "./Account";
 import TableDisplayButtons from "./TableDisplayButtons";
@@ -61,11 +62,32 @@ export const AccountListGroup: FC<{
     return `${selectedItems.length} selected`;
   }, [selectedItems]);
   return (
-    <TableContainer component={Paper} variant="outlined">
-      <Table>
+    <TableContainer
+      component={Paper}
+      variant="outlined"
+      sx={{
+        borderRadius: 3,
+        overflow: "hidden",
+        boxShadow: (theme) =>
+          `0 4px 20px ${alpha(theme.palette.common.black, 0.06)}`,
+      }}
+    >
+      <Table size="small" sx={{ "& td, & th": { py: 1.5 } }}>
         <TableBody>
           {items.length > 0 && (
-            <TableRow sx={{ marginLeft: "1rem" }}>
+            <TableRow
+              sx={(theme) => ({
+                bgcolor: alpha(theme.palette.primary.main, 0.06),
+                "& .MuiTableCell-root": {
+                  fontWeight: 700,
+                  fontSize: "0.8125rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  color: "text.secondary",
+                  borderBottom: `1px solid ${theme.palette.divider}`,
+                },
+              })}
+            >
               <TableCell>
                 <FormControlLabel
                   control={
@@ -94,7 +116,13 @@ export const AccountListGroup: FC<{
               <TableCell>Next Day Booking?</TableCell>
               <TableCell>Is Resident?</TableCell>
               <TableCell sx={{ textAlign: "right" }}>
-                <Button onClick={handleActionMenuClick}>Actions</Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleActionMenuClick}
+                >
+                  Actions
+                </Button>
                 <Menu
                   anchorEl={actionMenuAnchorEl}
                   open={actionMenuOpen}

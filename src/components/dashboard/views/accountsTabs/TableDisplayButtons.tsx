@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { AccountSpec } from "./Account";
 
 const TableDisplayButtons: FC<{
@@ -9,46 +9,61 @@ const TableDisplayButtons: FC<{
   incrementalVisibleItems: number;
 }> = ({ items, visibleItems, setVisibleItems, incrementalVisibleItems }) => {
   return items.length > 0 && items.length > incrementalVisibleItems ? (
-    <div
-      style={{
+    <Box
+      sx={{
         display: "flex",
+        flexWrap: "wrap",
         justifyContent: "center",
+        gap: 1,
+        py: 2,
+        px: 1,
+        borderTop: "1px solid",
+        borderColor: "divider",
+        bgcolor: "action.hover",
       }}
     >
       <Button
+        size="small"
+        variant="outlined"
         onClick={() => {
           setVisibleItems(incrementalVisibleItems);
         }}
         disabled={visibleItems <= incrementalVisibleItems}
       >
-        Show Min
+        Show min
       </Button>
       <Button
+        size="small"
+        variant="outlined"
         onClick={() => {
           setVisibleItems(visibleItems + incrementalVisibleItems);
         }}
         disabled={visibleItems > items.length}
       >
-        Show More
+        Show more
       </Button>
-
       <Button
+        size="small"
+        variant="outlined"
         onClick={() => {
           setVisibleItems(visibleItems - incrementalVisibleItems);
         }}
         disabled={visibleItems <= incrementalVisibleItems}
       >
-        Show Less
+        Show less
       </Button>
       <Button
+        size="small"
+        variant="contained"
+        color="primary"
         onClick={() => {
           setVisibleItems(items.length);
         }}
         disabled={visibleItems === items.length}
       >
-        Show All
+        Show all
       </Button>
-    </div>
+    </Box>
   ) : null;
 };
 

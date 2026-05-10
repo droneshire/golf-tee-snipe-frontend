@@ -83,17 +83,15 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
       <Box
         component="main"
         sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
           flexGrow: 1,
           height: "100vh",
           overflow: "auto",
+          /* Let global golf backdrop show through */
+          background: "transparent",
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="lg" sx={{ mt: 3, mb: 4 }}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <Outlet
               context={
