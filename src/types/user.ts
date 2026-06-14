@@ -81,10 +81,26 @@ export interface AccountType {
   isResident: boolean;
   payment?: CreditCardPayment;
 }
+
+export interface CompletedReservation {
+  ttid: string;
+  accountEmail: string;
+  courseName: string;
+  scheduleId: number;
+  teeTime: string;
+  playerCount: number;
+  holes: number;
+  details: string;
+  confirmedAt: string;
+}
+
 export interface ClientConfig {
   preferences: Preferences;
   accounts: {
     [id: string]: AccountType;
+  };
+  completedReservations?: {
+    [ttid: string]: CompletedReservation;
   };
 }
 
@@ -96,4 +112,5 @@ export const DEFAULT_USER_CONFIG: ClientConfig = {
     },
   },
   accounts: {},
+  completedReservations: {},
 };

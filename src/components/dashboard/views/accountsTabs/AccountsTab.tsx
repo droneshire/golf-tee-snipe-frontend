@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { DEFAULT_ACCOUNT_SPEC, AccountSpec } from "./Account";
 import { AccountListGroup } from "./AccountListGroup";
+import CompletedReservationsSection from "./CompletedReservationsSection";
 import NewAccountDialog from "./NewAccountsDialog";
 
 const MAX_ACCOUNTS = 3;
@@ -93,6 +94,7 @@ const AccountsTab: FC<{
   return (
     <>
       <Box alignItems="center" sx={{ width: "100%", minWidth: 0 }}>
+        <CompletedReservationsSection userConfigSnapshot={userConfigSnapshot} />
         <Paper
           elevation={0}
           variant="outlined"
