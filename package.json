@@ -20,7 +20,7 @@
     "@mui/x-date-pickers": "^7.3.2",
     "@mui/x-date-pickers-pro": "^7.3.2",
     "dayjs": "^1.11.11",
-    "firebase": "^10.12.1",
+    "firebase": "^13.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.0.13",
@@ -44,5 +44,8 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/react-dom": "^18.3.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.6"
   }
 }
